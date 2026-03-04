@@ -83,12 +83,11 @@ client.on("message", async (message) => {
         if (!chat.isGroup) return;
 
         // Group chats: Only reply if the message contains specific trigger words
-        const groupTriggers = ["search tool", "ep", "intreseted", "interested", "hello", "hi"];
+        const groupTriggers = ["search tool", "ep", "intreseted", "interested", "hello", "hi", "يا كونس", "كونس", "cons", "conss"];
         const textLower = userText.toLowerCase();
         const hasTrigger = groupTriggers.some(trigger => textLower.includes(trigger));
 
         if (!hasTrigger) return;
-
         // ---------------------------------------------------------
 
         // Get sender ID for conversation memory
@@ -111,11 +110,17 @@ client.on("message", async (message) => {
         // Add any word → reply pairs here. No AI needed for these.
         const keywordTriggers = {
             "كونس": "اييييييه",
-            // "مرحبا": "هلا والله 👋",
+            "ep": "hiii",
+            "interested": "Hi",
+            "hello": "hi dear ",
+            "hi": "hiiiii ",
+            "cons": "اييييييه",
+            "conss": "اييييييه",
         };
 
+        const textLowerMatch = userText.toLowerCase();
         const matched = Object.entries(keywordTriggers).find(([kw]) =>
-            userText.includes(kw)
+            textLowerMatch.includes(kw.toLowerCase())
         );
 
         if (matched) {
@@ -124,21 +129,10 @@ client.on("message", async (message) => {
             console.log(`🎯 Keyword "${matched[0]}" → "${matched[1]}"`);
             return;
         }
-        // ─────────────────────────────────────────────────────────
 
-        // Generate AI reply
-        const reply = await generateReply(contactId, userText);
-
-        if (!reply) {
-            console.warn("⚠️  No reply generated, skipping message");
-            await chat.clearState();
-            return;
-        }
-
-        // Send the reply
-        await message.reply(reply);
-
-        console.log(`🤖 Replied: ${reply}`);
+        // AI is disabled as requested — the bot will exactly and ONLY respond based on the keywords above.
+        await chat.clearState();
+        return;
     } catch (err) {
         console.error("❌ Error handling message:", err.message);
     }
