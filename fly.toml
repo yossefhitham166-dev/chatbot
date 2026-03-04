@@ -1,0 +1,17 @@
+app = "whatsapp-ai-bot"
+primary_region = "iad"  # US East — change to "fra" for Europe, "sin" for Asia
+
+[build]
+  dockerfile = "Dockerfile"
+
+# No [http_service] — this is a background worker, not a web server
+
+[[vm]]
+  memory = "512mb"      # Chromium needs at least 400MB
+  cpu_kind = "shared"
+  cpus = 1
+
+# Persistent volume — keeps WhatsApp session across restarts (no re-scan needed!)
+[mounts]
+  source = "whatsapp_session"
+  destination = "/app/session"
