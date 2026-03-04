@@ -73,12 +73,18 @@ client.on("message", async (message) => {
 
         const chat = await message.getChat();
 
-        // Ignore group chats unless enabled
-        if (chat.isGroup && !REPLY_IN_GROUPS) return;
-
         // Ignore empty or media-only messages
         const userText = message.body?.trim();
         if (!userText) return;
+
+        // Group chats: Only reply if enabled OR if the message contains specific trigger words
+        if (chat.isGroup) {
+            const groupTriggers = ["search tool", "ep", "intreseted", "interested", "hello", "hi"];
+            const textLower = userText.toLowerCase();
+            const hasTrigger = groupTriggers.some(trigger => textLower.includes(trigger));
+
+            if (!REPLY_IN_GROUPS && !hasTrigger) return;
+        }
 
         // Get sender ID for conversation memory
         const contactId = message.from;
