@@ -77,14 +77,19 @@ client.on("message", async (message) => {
         const userText = message.body?.trim();
         if (!userText) return;
 
-        // Group chats: Only reply if enabled OR if the message contains specific trigger words
-        if (chat.isGroup) {
-            const groupTriggers = ["search tool", "ep", "intreseted", "interested", "hello", "hi"];
-            const textLower = userText.toLowerCase();
-            const hasTrigger = groupTriggers.some(trigger => textLower.includes(trigger));
+        // --- NEW LOGIC: ONLY Group Chats & ONLY Trigger Words ---
 
-            if (!REPLY_IN_GROUPS && !hasTrigger) return;
-        }
+        // Ignore all private messages completely
+        if (!chat.isGroup) return;
+
+        // Group chats: Only reply if the message contains specific trigger words
+        const groupTriggers = ["search tool", "ep", "intreseted", "interested", "hello", "hi"];
+        const textLower = userText.toLowerCase();
+        const hasTrigger = groupTriggers.some(trigger => textLower.includes(trigger));
+
+        if (!hasTrigger) return;
+
+        // ---------------------------------------------------------
 
         // Get sender ID for conversation memory
         const contactId = message.from;
